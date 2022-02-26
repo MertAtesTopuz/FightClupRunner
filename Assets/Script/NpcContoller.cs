@@ -8,60 +8,91 @@ public class NpcContoller : MonoBehaviour
     [SerializeField] private bool blueNpc;
     [SerializeField] private float speed;
     [SerializeField] private float speed2;
-    public List<Collider> ragdollParts = new List<Collider>();
+    private Animator anim;
+    private Rigidbody playerRb;
+    private BoxCollider boxCol;
+
+    private Rigidbody[] rbs;
+    private Collider[] cols;
+
+    
 
     private void Awake()
     {
-        SetRagdollPart();
         inAwake();
     }
 
     void Update()
     {
-        
+        //bu silinecek
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            ActivateRagdoll();
+        }
     }
 
     private void inAwake()
     {
-        
+        rbs = GetComponentsInChildren<Rigidbody>();
+        cols = GetComponentsInChildren<Collider>();
+        playerRb = GetComponent<Rigidbody>();
+        boxCol = GetComponent<BoxCollider>();
+        anim = GetComponent<Animator>();
+
+        SetCollidersEnabled(false);
+        SetRbsKinematic(true);
 
     }
 
-    private void SetRagdollPart()
+    private void SetCollidersEnabled(bool enabled)
     {
-        Collider[] colliders = this.gameObject.GetComponentsInChildren<Collider>();
-
-        foreach (Collider c in colliders)
+        foreach (Collider col in cols)
         {
-            if (c.gameObject != this.gameObject)
-            {
-                //c.isTrigger = true;
-                ragdollParts.Add(c);
-            }
+            col.enabled = enabled;
         }
     }
 
-    private void TurnRagdollParts()
+    private void SetRbsKinematic(bool kinematic)
     {
-
+        foreach (Rigidbody rb in rbs)
+        {
+            rb.isKinematic = kinematic;
+        }
     }
 
+    private void ActivateRagdoll()
+    {
+        boxCol.enabled = false;
+        playerRb.isKinematic = true;
+        anim.enabled = false;
+
+        SetCollidersEnabled(true);
+        SetRbsKinematic(false);
+    }
+  
     private void OnTriggerEnter(Collider other)
     {
         if (redNpc == true)
         {
            
-                if (other.tag == "Tyler")
-                {
-                    Destroy(gameObject);
-                }
+            if (other.tag == "Tyler")
+            {
+                anim.enabled = false;
+                // activateRagdoll çalışacak
+                // mutlu olma particle sytem devreye girecek
+                // uı kodundaki slider kodu aktive olacak
+                // 5 saniye sonra destrot edilecek
+            }
 
-                else if (other.tag == "Jack")
-                {
+            else if (other.tag == "Jack")
+            {
                     Destroy(gameObject);
-                }
+                    // animatorden uygun animasyon çalışacak
+                    // sinirlenme particle sytem devreye girecek
+                    // 5 saniye sonra destrot edilecek
+            }
 
-            
+
         }
 
         if (blueNpc == true)
@@ -69,20 +100,26 @@ public class NpcContoller : MonoBehaviour
             if (other.tag == "Tyler")
             {
                 Destroy(gameObject);
+                // activateRagdoll çalışacak
+                // sinirlenme particle sytem devreye girecek
+                // 5 saniye sonra destrot edilecek
             }
 
             else if (other.tag == "Jack")
             {
                 Destroy(gameObject);
+                // animatorden uygun animasyon çalışacak
+                // mutlu olma particle sytem devreye girecek
+                // uı kodundaki slider kodu aktive olacak
+                // 5 saniye sonra destrot edilecek
             }
 
         } 
     }
 
-      IEnumerator BlueTyler()
-      {
-          yield return new WaitForSeconds(speed);
-          
-      } 
+    IEnumerator BlueTyler()
+    {
+       yield return new WaitForSeconds(speed);
+    } 
 
 }
