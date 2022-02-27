@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Tyler
   - Jack
+  - Left
+  - Right
+  - Npc
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - UI
   - Jack
   - Tyler
-  - 
+  - NPC
   - 
   - 
   - 

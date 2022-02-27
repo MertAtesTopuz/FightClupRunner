@@ -6,8 +6,11 @@ public class NpcContoller : MonoBehaviour
 {
     [SerializeField] private bool redNpc;
     [SerializeField] private bool blueNpc;
-    [SerializeField] private float speed;
-    [SerializeField] private float speed2;
+    public bool deneme = false;
+
+    public float time;
+    [SerializeField] private float maxTime = 10f;
+
     private Animator anim;
     private Rigidbody playerRb;
     private BoxCollider boxCol;
@@ -15,33 +18,33 @@ public class NpcContoller : MonoBehaviour
     private Rigidbody[] rbs;
     private Collider[] cols;
 
-    
+    private UIManager UI;
 
     private void Awake()
-    {
-        inAwake();
-    }
-
-    void Update()
-    {
-        //bu silinecek
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ActivateRagdoll();
-        }
-    }
-
-    private void inAwake()
     {
         rbs = GetComponentsInChildren<Rigidbody>();
         cols = GetComponentsInChildren<Collider>();
         playerRb = GetComponent<Rigidbody>();
         boxCol = GetComponent<BoxCollider>();
         anim = GetComponent<Animator>();
+        UI = FindObjectOfType<UIManager>();
 
         SetCollidersEnabled(false);
         SetRbsKinematic(true);
+        playerRb.isKinematic = false;
+        boxCol.enabled = true;
+    }
 
+    void Update()
+    {
+        if (deneme == true)
+        {
+            time -= Time.deltaTime;
+        }
+        if (time <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void SetCollidersEnabled(bool enabled)
@@ -60,7 +63,7 @@ public class NpcContoller : MonoBehaviour
         }
     }
 
-    private void ActivateRagdoll()
+    public void ActivateRagdoll()
     {
         boxCol.enabled = false;
         playerRb.isKinematic = true;
@@ -68,6 +71,7 @@ public class NpcContoller : MonoBehaviour
 
         SetCollidersEnabled(true);
         SetRbsKinematic(false);
+        boxCol.enabled = enabled;
     }
   
     private void OnTriggerEnter(Collider other)
@@ -77,8 +81,11 @@ public class NpcContoller : MonoBehaviour
            
             if (other.tag == "Tyler")
             {
-                anim.enabled = false;
-                // activateRagdoll çalışacak
+                deneme = true;
+                UI.currentValue += 1;
+                time = maxTime;
+                ActivateRagdoll();
+                
                 // mutlu olma particle sytem devreye girecek
                 // uı kodundaki slider kodu aktive olacak
                 // 5 saniye sonra destrot edilecek
@@ -116,10 +123,5 @@ public class NpcContoller : MonoBehaviour
 
         } 
     }
-
-    IEnumerator BlueTyler()
-    {
-       yield return new WaitForSeconds(speed);
-    } 
 
 }
