@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterMove : MonoBehaviour
 {
     [SerializeField] private float speed;
+    public bool isRunning = false;
 
     void Start()
     {
@@ -13,6 +14,10 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(0, 0, speed * Time.deltaTime);
+        if (isRunning == true)
+        {
+            transform.Translate(0, 0, speed * Time.deltaTime);
+        }
+        
     }
 }

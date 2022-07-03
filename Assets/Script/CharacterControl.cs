@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterControl : MonoBehaviour
 {
     private Rigidbody rb;
+    private Animator anim;
 
     [SerializeField] private float speed;
     [SerializeField] private bool Tyler;
@@ -16,6 +17,8 @@ public class CharacterControl : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
+        
     }
 
     void Update()

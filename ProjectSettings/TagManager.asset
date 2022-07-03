@@ -9,6 +9,8 @@ TagManager:
   - Left
   - Right
   - Npc
+  - HandT
+  - Final
   layers:
   - Default
   - TransparentFX
@@ -19,11 +21,11 @@ TagManager:
   - Jack
   - Tyler
   - NPC
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - TylerHand
+  - HandT
+  - AnimTriggerT
+  - AnimTriggerJ
   - 
   - 
   - 

@@ -2,15 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//High Rise Invasion
+
 public class NpcContoller : MonoBehaviour
 {
-    [SerializeField] private bool redNpc;
-    [SerializeField] private bool blueNpc;
-    public bool deneme = false;
-
-    public float time;
-    [SerializeField] private float maxTime = 10f;
-
+    [Header("General")]
     private Animator anim;
     private Rigidbody playerRb;
     private BoxCollider boxCol;
@@ -20,8 +16,25 @@ public class NpcContoller : MonoBehaviour
 
     private UIManager UI;
 
+    [Header("Effect")]
+    [SerializeField] private GameObject angryEffect;
+    [SerializeField] private GameObject happyEffect;
+
+    [Header("Timer")]
+    private bool DeathTimer = false;
+    private float time;
+    [SerializeField] private float maxTime = 10f;
+
+    [Header("NpcSettings")]
+    [SerializeField] private bool redNpc;
+    [SerializeField] private bool blueNpc;
+    [SerializeField] private bool back;
+    [SerializeField] private bool forward;
+    private bool tForce = false;
+
     private void Awake()
     {
+        time = maxTime;
         rbs = GetComponentsInChildren<Rigidbody>();
         cols = GetComponentsInChildren<Collider>();
         playerRb = GetComponent<Rigidbody>();
@@ -33,11 +46,38 @@ public class NpcContoller : MonoBehaviour
         SetRbsKinematic(true);
         playerRb.isKinematic = false;
         boxCol.enabled = true;
+
+        int rand = Random.Range(1, 6);
+
+        if (rand == 1)
+        {
+            anim.SetBool("isSadI", true);
+        }
+
+        else if(rand == 2)
+        {
+            anim.SetBool("isNaturalI", true);
+        }
+
+        else if (rand == 3)
+        {
+            anim.SetBool("isDwarfI", true);
+        }
+
+        else if (rand == 4)
+        {
+            anim.SetBool("isHappyI", true);
+        }
+
+        else if (rand == 5)
+        {
+            anim.SetBool("isOrcI", true);
+        }
     }
 
     void Update()
     {
-        if (deneme == true)
+        if (DeathTimer == true)
         {
             time -= Time.deltaTime;
         }
@@ -59,18 +99,33 @@ public class NpcContoller : MonoBehaviour
     {
         foreach (Rigidbody rb in rbs)
         {
+            if (tForce == true)
+            {
+                if (back == true)
+                {
+                   playerRb.AddForce(transform.forward * 1000f);
+                }
+                else if (forward == true)
+                {
+                   playerRb.AddForce(-transform.forward * 1000f);
+                }
+            }
+            
+
             rb.isKinematic = kinematic;
         }
     }
 
     public void ActivateRagdoll()
     {
+        
         boxCol.enabled = false;
         playerRb.isKinematic = true;
         anim.enabled = false;
 
         SetCollidersEnabled(true);
         SetRbsKinematic(false);
+        
         boxCol.enabled = enabled;
     }
   
@@ -78,50 +133,66 @@ public class NpcContoller : MonoBehaviour
     {
         if (redNpc == true)
         {
-           
             if (other.tag == "Tyler")
             {
-                deneme = true;
+                tForce = true;
+                
+            }
+
+            if (other.tag == "HandT")
+            {
+                happyEffect.SetActive(true);
+                DeathTimer = true;
                 UI.currentValue += 1;
                 time = maxTime;
                 ActivateRagdoll();
-                
-                // mutlu olma particle sytem devreye girecek
-                // uı kodundaki slider kodu aktive olacak
-                // 5 saniye sonra destrot edilecek
+
             }
 
             else if (other.tag == "Jack")
             {
-                    Destroy(gameObject);
-                    // animatorden uygun animasyon çalışacak
-                    // sinirlenme particle sytem devreye girecek
-                    // 5 saniye sonra destrot edilecek
+                DeathTimer = true;
+                time = maxTime;
+                anim.SetBool("getAngry", true);
+                angryEffect.SetActive(true);
+
+                if (UI.currentValue > 0)
+                {
+                    UI.currentValue -= 1;
+                }
             }
-
-
         }
 
         if (blueNpc == true)
         {
             if (other.tag == "Tyler")
             {
-                Destroy(gameObject);
-                // activateRagdoll çalışacak
-                // sinirlenme particle sytem devreye girecek
-                // 5 saniye sonra destrot edilecek
+                tForce = true;
+            }
+
+            if (other.tag == "HandT")
+            {
+                DeathTimer = true;
+                angryEffect.SetActive(true);
+
+                if (UI.currentValue > 0)
+                {
+                    UI.currentValue -= 1;
+                }
+                time = maxTime;
+
+                ActivateRagdoll();
             }
 
             else if (other.tag == "Jack")
             {
-                Destroy(gameObject);
-                // animatorden uygun animasyon çalışacak
-                // mutlu olma particle sytem devreye girecek
-                // uı kodundaki slider kodu aktive olacak
-                // 5 saniye sonra destrot edilecek
-            }
+                DeathTimer = true;
+                time = maxTime;
+                happyEffect.SetActive(true);
+                anim.SetBool("isWaving", true);
 
+                UI.currentValue += 1;
+            }
         } 
     }
-
 }
